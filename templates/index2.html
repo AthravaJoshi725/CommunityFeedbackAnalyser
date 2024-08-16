@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sentiment/Emotion Analysis</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <div class="top">
+        <nav class="navbar">
+            <div class="container">
+                <a class="navbar-brand">Home</a>
+            </div>
+        </nav>
+        <!-- END nav -->
+
+        <section class="section" id="section-home" data-aos="fade" data-stellar-background-ratio="0.5">
+            <div class="container">
+                <div class="left-container">
+                    <div class="col-md-7">
+                        <h1 class="ftco-heading mb-3" data-aos="fade-up" data-aos-delay="500">Welcome</h1>
+                        <h2 class="subheading">Get to know about your Community</h2>
+                        <form class="searchBar" method="post" id="linkForm">
+                            <input type="text" id="linktext" name="link" placeholder="Paste your LINK here!!!" required>
+                            <button type="submit" id="Analyzbtn">Submit</button>
+                        </form>
+                        <div class="loader" id="loader"></div>
+                        <div>
+                            <br><br><br>
+                            <h3 id="Analysisoncomments" style="color:White" data-aos="fade-up" data-aos-delay="500">
+                                Perform <a href="/sentiment" style="color:#D7C004">Sentiment</a> And 
+                                <a style="color:#D7C004" href="/emotion">Emotion</a> Analysis on comments
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- 
+                <div class="logo">
+                    <img class="ytLOGO" src="Img/ytLOGO.png" alt="">
+                    <img class="fbLOGO" src="Img/fbLOGO.png" alt="">
+                    <img class="twitterLOGO" src="Img/twitterLOGO.png" alt="">
+                    <img class="instaLOGO" src="Img/instaLOGO.png" alt="">
+                </div>
+                -->
+            </div>
+        </section>
+        <!-- END section -->
+
+        <section class="section" id="section-about">
+            <div class="container mx-auto" data-aos="fade-up">
+                {% if result %}
+                    <h4>Results for "{{ video_title }}"</h4>
+                {% endif %}
+            </div>
+        </section>
+        <!-- END section -->
+    </div>
+    
+    <div class="page2">
+        <div class="head">
+            <h2>Results</h2>
+        </div>
+        <div class="container2">
+            <div class="filtersection-background">
+                <div class="filtersection">
+                    <h4 class="filter-option">filters</h4>
+                    <h4 class="filter-option">filters</h4>
+                    <h4 class="filter-option">filters</h4>
+                    <h4 class="filter-option">filters</h4>
+                </div>
+                <button class="open-filter">FILTER</button>
+            </div>
+            <div class="rpage">
+                <div class="reaction">
+                    <div class="comment-section">
+                        <h3 id="your-text">
+                            Majority Feedback, <a id="reaction-name"></a>
+                            <span class="angryGIF">
+                                <img id="GIF" src="" alt="">
+                            </span>
+                        </h3>
+                        <br>
+                        <div class="comment-box">
+                            <div class="comment" id="comment"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="loader" id="loader"></div>
+                <div class="percentages">
+                    <div class="positive-box">
+                        <h4>Positive: {{ result['positive'] }}</h4>
+                    </div>
+                    <div class="negative-box">
+                        <h4>Negative: {{ result['negative'] }}</h4>
+                    </div>
+                    <!-- Uncomment if needed
+                    <div class="neutral-box">
+                        <h4>Neutral: <a id="per-neutral"></a></h4>
+                    </div>
+                    <div class="misc-box">
+                        <h4>Misc: <a id="per-misc"></a></h4>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>    
+</body>
+</html>

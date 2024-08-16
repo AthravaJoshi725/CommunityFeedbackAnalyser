@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Processor</title>
+    <style>
+        /* Loader styling */
+        .loader {
+            position: fixed;
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .loader::after {
+            content: "";
+            width: 75px;
+            height: 75px;
+            border: 15px solid whitesmoke;
+            border-top: 15px solid royalblue;
+            border-radius: 50%;
+            animation: loading 0.75s ease infinite;
+        }
+
+        @keyframes loading {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        .percentages {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .positive-box, .negative-box {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .positive-box {
+            background-color: #d4edda;
+        }
+
+        .negative-box {
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter your Link</h1>
+    <form method="POST" id="linkForm">
+        <input type="text" name="link" placeholder="Enter your link" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div class="loader" id="loader"></div>
+    {% if result %}
+        <h4>Results for "{{ video_title }}"</h4>
+        <div class="percentages">
+            <div class="positive-box">
+                <h4>Positive: {{ result['positive'] }}</h4>
+            </div>
+            <div class="negative-box">
+                <h4>Negative: {{ result['negative'] }}</h4>
+            </div>
+        </div>
+    {% endif %}
+    <script>
+        document.getElementById('linkForm').addEventListener('submit', function() {
+            document.getElementById('loader').style.display = 'flex';
+        });
+        
+        window.addEventListener('load', () => {
+            document.getElementById('loader').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
