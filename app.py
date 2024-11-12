@@ -122,22 +122,30 @@ class Ycom(object):
             'joy_comments': joy_comments,
             'anger_comments': anger_comments,
         }
-
+    
+    
 def main():
-    st.title("YouTube Comments Sentiment Analysis")
-    st.write("Enter a YouTube video link to extract comments and perform sentiment analysis.")
+    st.title("CommentCraftr")
+    st.write("Enter a social media link to extract comments and perform sentiment analysis.")
 
-    video_url = st.text_input("YouTube Video URL")
-    remove_spam = st.checkbox("Filter Spam Comments", value=True)  
-    st.write("Filter comments based on emotion:")
-    filter_sad = st.checkbox("Sad")
-    filter_joy = st.checkbox("Joy")
-    filter_anger = st.checkbox("Anger")
-    st.write("Filter comments based on sentiment:")
-    filter_positive = st.checkbox("Positive")
-    filter_negative = st.checkbox("Negative")
+    # Text input for video URL with a unique key
+    video_url = st.text_input("YouTube Video URL", key="video_url")
 
-    if st.button("Submit"):
+    # Sidebar for filter options
+    st.sidebar.header("Filter Options")
+    remove_spam = st.sidebar.checkbox("Filter Spam Comments", value=True, key="remove_spam")
+
+    st.sidebar.subheader("Filter comments based on emotion:")
+    filter_sad = st.sidebar.checkbox("Sad", key="filter_sad")
+    filter_joy = st.sidebar.checkbox("Joy", key="filter_joy")
+    filter_anger = st.sidebar.checkbox("Anger", key="filter_anger")
+
+    st.sidebar.subheader("Filter comments based on sentiment:")
+    filter_positive = st.sidebar.checkbox("Positive", key="filter_positive")
+    filter_negative = st.sidebar.checkbox("Negative", key="filter_negative")
+
+    # Sentiment analysis bars at the top
+    if st.button("Submit", key="submit_button"):
         if video_url:
             ycom = Ycom()
             ycom.make_youtube()
@@ -150,6 +158,7 @@ def main():
             else:
                 st.write(f"Extracted comments from: **{ycom.video_title}**")
 
+                # Perform spam detection
                 if remove_spam:
                     with st.spinner("Detecting and removing spam..."):
                         spam_result = ycom.perform_spam_detection(comments)
@@ -162,6 +171,7 @@ def main():
                     else:
                         st.success("No spam comments were detected.")
 
+                # Perform emotion-based filtering
                 if filter_sad or filter_joy or filter_anger:
                     with st.spinner("Filtering comments based on emotion..."):
                         emotion_result = ycom.perform_emotion_detection(comments)
@@ -181,9 +191,26 @@ def main():
                         for comment in emotion_result['anger_comments']:
                             st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
 
+                # Perform sentiment analysis
                 with st.spinner("Performing sentiment analysis..."):
                     sentiment_result = ycom.perform_sentiment_analysis(comments)
 
+                # Display sentiment analysis results at the top
+                st.write("### Sentiment Analysis Overview")
+
+                # Convert positive and negative percentages to floats after removing the '%' sign
+                positive_percentage = float(sentiment_result['positive'].strip('%'))
+                negative_percentage = float(sentiment_result['negative'].strip('%'))
+
+                # Display positive and negative progress bars
+                st.progress(positive_percentage / 100)  # Progress bar takes a float between 0 and 1
+                st.progress(negative_percentage / 100)
+
+                st.write(f"**Positive Comments:** {positive_percentage}%")
+                st.write(f"**Negative Comments:** {negative_percentage}%")
+
+
+                # Display filtered sentiment comments based on selection
                 if filter_positive or filter_negative:
                     st.write("### Filtered Sentiment Comments")
                     if filter_positive:
@@ -197,12 +224,10 @@ def main():
                         for comment in sentiment_result['comments_with_sentiment']:
                             if comment['sentiment'] == 'negative':
                                 st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
-
-                st.write("### Sentiment Analysis Results")
-                st.write(f"Positive Comments: {sentiment_result['positive']}")
-                st.write(f"Negative Comments: {sentiment_result['negative']}")
         else:
             st.error("Please enter a valid YouTube video URL.")
+
+
 
 if __name__ == "__main__":
     main()
