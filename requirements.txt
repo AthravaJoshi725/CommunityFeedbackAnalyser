@@ -7,4 +7,3 @@ json5
 google-api-python-client 
 tweepy 
 instaloader
-AIzaSyBv-jnkjGCMffLa8IyhCc-Z1xC_R0_B9m8
