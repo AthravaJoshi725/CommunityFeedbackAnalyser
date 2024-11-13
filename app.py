@@ -1,8 +1,13 @@
 import os
+import os
+from dotenv import load_dotenv
+
 import googleapiclient.discovery
 import re
 import pickle
 import streamlit as st
+
+load_dotenv()
 
 def banner():
     st.title("YouTube Comments Sentiment Analysis")
@@ -16,7 +21,7 @@ class Ycom(object):
 
         api_service_name = "youtube"
         api_version = "v3"
-        DEVELOPER_KEY = "AIzaSyBv-jnkjGCMffLa8IyhCc-Z1xC_R0_B9m8" 
+        DEVELOPER_KEY =  os.getenv("API_KEY")
 
         self.youtube = googleapiclient.discovery.build(
             api_service_name, api_version, developerKey=DEVELOPER_KEY)
@@ -171,6 +176,39 @@ def main():
                     else:
                         st.success("No spam comments were detected.")
 
+                # Perform sentiment analysis immediately after spam removal and filtering
+                with st.spinner("Performing sentiment analysis..."):
+                    sentiment_result = ycom.perform_sentiment_analysis(comments)
+
+                # Display sentiment analysis results at the top
+                st.write("### Sentiment Analysis Overview")
+
+                # Convert positive and negative percentages to floats after removing the '%' sign
+                positive_percentage = float(sentiment_result['positive'].strip('%'))
+                negative_percentage = float(sentiment_result['negative'].strip('%'))
+
+                # Display positive and negative progress bars
+                st.progress(positive_percentage / 100)  # Progress bar takes a float between 0 and 1
+                st.progress(negative_percentage / 100)
+
+                st.write(f"**Positive Comments:** {positive_percentage}%")
+                st.write(f"**Negative Comments:** {negative_percentage}%")
+
+                # Display filtered sentiment comments based on selection
+                if filter_positive or filter_negative:
+                    st.write("### Filtered Sentiment Comments")
+                    if filter_positive:
+                        st.success("Displaying Positive comments:")
+                        for comment in sentiment_result['comments_with_sentiment']:
+                            if comment['sentiment'] == 'positive':
+                                st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
+
+                    if filter_negative:
+                        st.error("Displaying Negative comments:")
+                        for comment in sentiment_result['comments_with_sentiment']:
+                            if comment['sentiment'] == 'negative':
+                                st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
+
                 # Perform emotion-based filtering
                 if filter_sad or filter_joy or filter_anger:
                     with st.spinner("Filtering comments based on emotion..."):
@@ -191,43 +229,8 @@ def main():
                         for comment in emotion_result['anger_comments']:
                             st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
 
-                # Perform sentiment analysis
-                with st.spinner("Performing sentiment analysis..."):
-                    sentiment_result = ycom.perform_sentiment_analysis(comments)
-
-                # Display sentiment analysis results at the top
-                st.write("### Sentiment Analysis Overview")
-
-                # Convert positive and negative percentages to floats after removing the '%' sign
-                positive_percentage = float(sentiment_result['positive'].strip('%'))
-                negative_percentage = float(sentiment_result['negative'].strip('%'))
-
-                # Display positive and negative progress bars
-                st.progress(positive_percentage / 100)  # Progress bar takes a float between 0 and 1
-                st.progress(negative_percentage / 100)
-
-                st.write(f"**Positive Comments:** {positive_percentage}%")
-                st.write(f"**Negative Comments:** {negative_percentage}%")
-
-
-                # Display filtered sentiment comments based on selection
-                if filter_positive or filter_negative:
-                    st.write("### Filtered Sentiment Comments")
-                    if filter_positive:
-                        st.success("Displaying Positive comments:")
-                        for comment in sentiment_result['comments_with_sentiment']:
-                            if comment['sentiment'] == 'positive':
-                                st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
-
-                    if filter_negative:
-                        st.error("Displaying Negative comments:")
-                        for comment in sentiment_result['comments_with_sentiment']:
-                            if comment['sentiment'] == 'negative':
-                                st.write(f"- {comment['author']}: {comment['text']} (Likes: {comment['like_count']})")
         else:
             st.error("Please enter a valid YouTube video URL.")
-
-
 
 if __name__ == "__main__":
     main()
