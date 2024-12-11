@@ -7,7 +7,7 @@ import re
 import pickle
 import streamlit as st
 
-load_dotenv()
+# load_dotenv()
 
 def banner():
     st.title("YouTube Comments Sentiment Analysis")
