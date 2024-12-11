@@ -7,3 +7,4 @@ json5
 google-api-python-client 
 tweepy 
 instaloader
+streamlit
