@@ -21,7 +21,7 @@ class Ycom(object):
 
         api_service_name = "youtube"
         api_version = "v3"
-        DEVELOPER_KEY = API_KEY
+        DEVELOPER_KEY = "API_KEY"
 
         self.youtube = googleapiclient.discovery.build(
             api_service_name, api_version, developerKey=DEVELOPER_KEY)
