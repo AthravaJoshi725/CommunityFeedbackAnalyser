@@ -1,13 +1,13 @@
 import os
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 import googleapiclient.discovery
 import re
 import pickle
 import streamlit as st
 
-# load_dotenv()
+load_dotenv()
 
 def banner():
     st.title("YouTube Comments Sentiment Analysis")
@@ -21,7 +21,8 @@ class Ycom(object):
 
         api_service_name = "youtube"
         api_version = "v3"
-        DEVELOPER_KEY = "API_KEY"
+        DEVELOPER_KEY = os.getenv('API_KEY')
+
 
         self.youtube = googleapiclient.discovery.build(
             api_service_name, api_version, developerKey=DEVELOPER_KEY)
